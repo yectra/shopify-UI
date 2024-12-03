@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
+// enough when changing adapters.
+// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
+
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:dev.sqlite"
+}
+
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+}
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schempa
+
+
+model AffiliateUser {
+  id                     Int                  @id @default(autoincrement())
+  userId                 BigInt
+  firstName              String
+  lastName               String?
+  email                  String?
+  phone                  BigInt?
+  affiliateLinks         AffiliateLink[]
+  promotionalMethods     PromotionalMethods[]
+  websiteTraffic         Int?
+  marketingExperience    String?
+  createdAt              DateTime             @default(now())
+}
+ 
+model PromotionalMethods {
+  id                 Int               @id @default(autoincrement())
+  instagramUrls      InstagramUrl[]
+  youtubeUrls        YouTubeUrl[]
+  twitterUrls        TwitterUrl[]
+  blogUrls           BlogUrl[]
+  affiliateUserId    Int?
+  affiliateUser      AffiliateUser?    @relation(fields: [affiliateUserId], references: [id])
+}
+ 
+model InstagramUrl {
+  id                 Int               @id @default(autoincrement())
+  url                String
+  promotionalMethods PromotionalMethods @relation(fields: [promotionalMethodsId], references: [id])
+  promotionalMethodsId Int
+}
+ 
+model YouTubeUrl {
+  id                 Int               @id @default(autoincrement())
+  url                String
+  promotionalMethods PromotionalMethods @relation(fields: [promotionalMethodsId], references: [id])
+  promotionalMethodsId Int
+}
+ 
+model TwitterUrl {
+  id                 Int               @id @default(autoincrement())
+  url                String
+  promotionalMethods PromotionalMethods @relation(fields: [promotionalMethodsId], references: [id])
+  promotionalMethodsId Int
+}
+ 
+model BlogUrl {
+  id                 Int               @id @default(autoincrement())
+  url                String
+  promotionalMethods PromotionalMethods @relation(fields: [promotionalMethodsId], references: [id])
+  promotionalMethodsId Int
+}
+ 
+model AffiliateLink {
+  id            Int            @id @default(autoincrement())
+  url           String
+  productId     String
+  shop          String
+  userId        Int
+  affiliateUser AffiliateUser   @relation(fields: [userId], references: [id])
+  clicks        Int            @default(0)
+  createdAt     DateTime       @default(now())
+}
+
+
+model AffiliateProgram {
+  id           Int       @id @default(autoincrement())
+  name         String
+  commission   Float
+  eligibility  String
+  scope        String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  //selectedProducts   Product[] @relation("ProgramProducts")
+  //selectedCategories Category[] @relation("ProgramCategories")
+}
+
+model Product {
+  id       String    @id
+  title    String
+  imageUrl String?
+  price    Float
+  //programs AffiliateProgram[] @relation("ProgramProducts")
+}
+
+model Category {
+  id       String    @id
+  title    String
+  //programs AffiliateProgram[] @relation("ProgramCategories")
+}
